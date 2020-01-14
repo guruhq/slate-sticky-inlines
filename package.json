@@ -42,7 +42,7 @@
     "npm-run-all": "^4.0.2",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "slate": "^0.32.0",
+    "slate": "^0.34.0",
     "slate-hyperscript": "^0.5.0",
     "watchify": "^3.9.0"
   },
