@@ -1,3 +1,11 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.isInlineBanned = isInlineBanned;
+exports.moveToEndOf = moveToEndOf;
+exports.moveToStartOf = moveToStartOf;
 /**
  * Return true if settings bans the inline type, or it is void.
  *
@@ -6,10 +14,12 @@
  * @return {Boolean}
  */
 
-export function isInlineBanned(inline, opts) {
-  const { allowedTypes, bannedTypes } = opts;
+function isInlineBanned(inline, opts) {
+  var allowedTypes = opts.allowedTypes,
+      bannedTypes = opts.bannedTypes;
 
   // Something crazy happened, there is no inline, or somehow focus inline is not an inline.
+
   if (!inline || inline.object !== "inline" || inline.isVoid) return true;
 
   // The inline we are working with isn't allowed by user config.
@@ -30,11 +40,11 @@ export function isInlineBanned(inline, opts) {
  * @return {Change}
  */
 
-export function moveToEndOf(change, node, event, offset = 0) {
+function moveToEndOf(change, node, event) {
+  var offset = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+
   event.preventDefault();
-  return event.shiftKey
-    ? change.extendToEndOf(node).extend(offset)
-    : change.collapseToEndOf(node).move(offset);
+  return event.shiftKey ? change.extendToEndOf(node).extend(offset) : change.collapseToEndOf(node).move(offset);
 }
 
 /**
@@ -48,9 +58,9 @@ export function moveToEndOf(change, node, event, offset = 0) {
  * @return {Change}
  */
 
-export function moveToStartOf(change, node, event, offset = 0) {
+function moveToStartOf(change, node, event) {
+  var offset = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+
   event.preventDefault();
-  return event.shiftKey
-    ? change.extendToStartOf(node).extend(offset)
-    : change.collapseToStartOf(node);
+  return event.shiftKey ? change.extendToStartOf(node).extend(offset) : change.collapseToStartOf(node);
 }
