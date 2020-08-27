@@ -104,7 +104,6 @@ var defaults = {
 
   function onChange(change) {
     if (!canBeEmpty) return null;
-    var hasSave = change.flags.hasOwnProperty('save');
     var toRemove = change.value.document.getInlines().reduce(function (failures, inline) {
       var hasFocus = change.value.isFocused && change.value.selection.hasEdgeIn(inline);
       var onlyHasZeroWidthSpace = inline.text === _constants.ZERO_WIDTH_SPACE;
@@ -132,14 +131,17 @@ var defaults = {
    */
 
   function onSelect(event, change) {
+    if (!change.value.focusInline) return null;
     var selection = (0, _slateReact.findRange)(window.getSelection(), change.value);
-    var selectionIsAtEndOfInline = change.value.focusInline && selection.focusOffset === change.value.focusInline.text.length;
+    if (!selection) return null;
+    var focusInline = change.value.document.getClosestInline(selection.anchorKey);
+    if (!focusInline) return null;
+    console.log(focusInline);
+    var selectionIsAtEndOfInline = focusInline.key === change.value.focusInline.key && selection.focusOffset === focusInline.text.length;
 
-    if (change.value.isCollapsed && selectionIsAtEndOfInline) {
+    if (selection.isCollapsed && selectionIsAtEndOfInline) {
       return change;
     }
-
-    return null;
   }
 
   /**
