@@ -136,12 +136,14 @@ var defaults = {
     if (!selection) return null;
     var focusInline = change.value.document.getClosestInline(selection.anchorKey);
     if (!focusInline) return null;
-    console.log(focusInline);
+
     var selectionIsAtEndOfInline = focusInline.key === change.value.focusInline.key && selection.focusOffset === focusInline.text.length;
 
     if (selection.isCollapsed && selectionIsAtEndOfInline) {
       return change;
     }
+
+    return null;
   }
 
   /**
