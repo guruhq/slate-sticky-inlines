@@ -1,13 +1,13 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = onBackspace;
 
-var _constants = require('./constants');
+var _constants = require("./constants");
 
-var _utils = require('./utils');
+var _utils = require("./utils");
 
 /**
  * Sticky Backspace Link logic
@@ -26,14 +26,14 @@ function onBackspace(event, change, editor, opts) {
   if (change.value.isExpanded) return null;
 
   // Logic for backspacing "into" a sticky inline
-  var isAtStartOfCurrentTextNode = !change.value.focusInline && change.value.selection.focusOffset === 0;
+  var isAtStartOfCurrentTextNode = !change.value.focusInline && change.value.selection.focus.offset === 0;
 
   if (isAtStartOfCurrentTextNode && stickOnDelete) {
     var textNodeIndex = change.value.focusBlock.nodes.findIndex(function (node) {
       return node.key === change.value.focusText.key;
     });
     var upcomingNode = change.value.focusBlock.nodes.get(textNodeIndex - 1);
-    if ((0, _utils.isInlineBanned)(upcomingNode, opts)) return null;
+    if ((0, _utils.isInlineBanned)(change.value.schema, upcomingNode, opts)) return null;
 
     event.preventDefault();
     return change.collapseToEndOf(upcomingNode).deleteBackward();

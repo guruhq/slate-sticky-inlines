@@ -1,13 +1,13 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = onArrowRight;
 
-var _constants = require('./constants');
+var _constants = require("./constants");
 
-var _utils = require('./utils');
+var _utils = require("./utils");
 
 /**
  * Determines behavior if the caret is currently outside of an inline, while arrowing to the right
@@ -25,7 +25,7 @@ function handleArrowRightOutsideInline(event, change, editor, opts) {
 
   // We are outside of an inline and need to figure out if we are anywhere close to a sticky inline
 
-  var isAtEndOfCurrentTextNode = change.value.selection.focusOffset === change.value.focusText.text.length;
+  var isAtEndOfCurrentTextNode = change.value.selection.focus.offset === change.value.focusText.text.length;
 
   if (!isAtEndOfCurrentTextNode) return null;
   var textNodeIndex = change.value.focusBlock.nodes.findIndex(function (node) {
@@ -33,7 +33,8 @@ function handleArrowRightOutsideInline(event, change, editor, opts) {
   }) + 1;
   var upcomingNode = change.value.focusBlock.nodes.get(textNodeIndex);
 
-  if ((0, _utils.isInlineBanned)(upcomingNode, opts) || !hasStickyBoundaries || isExtending || upcomingNode.isVoid) return null;
+  if ((0, _utils.isInlineBanned)(change.value.schema, upcomingNode, opts) || !hasStickyBoundaries || isExtending || upcomingNode.isVoid // need to change?
+  ) return null;
 
   return change.call(_utils.moveToStartOf, upcomingNode, event);
 }
@@ -55,10 +56,10 @@ function handleArrowRightInsideInline(event, change, editor, opts) {
   // In normal slate inline world, these two boundaries are the true start/end of an Inline.
   // Since you can never actually move to the start or end of an inline (that's what we are fixing after all!)
 
-  var isAtSecondToLastCharacter = change.value.selection.focusOffset === change.value.focusInline.text.length - 1;
+  var isAtSecondToLastCharacter = change.value.selection.focus.offset === change.value.focusInline.text.length - 1;
 
   // Thanks to this very plugin, it's common to be in this change.value where you are at the edge of an inline.
-  var isAtLastCharacter = change.value.selection.focusOffset === change.value.focusInline.text.length;
+  var isAtLastCharacter = change.value.selection.focus.offset === change.value.focusInline.text.length;
 
   var inlineIndex = change.value.focusBlock.nodes.findIndex(function (node) {
     return node.key === change.value.focusInline.key;
