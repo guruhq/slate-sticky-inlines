@@ -23,7 +23,7 @@ function onDelete(event, change, editor, opts) {
   var canBeEmpty = opts.canBeEmpty,
       stickOnDelete = opts.stickOnDelete;
 
-  if (change.value.isExpanded) return null;
+  if (change.value.selection.isExpanded) return null;
 
   // Logic for deleting "into" a sticky inline
   var isAtEndOfCurrentTextNode = !change.value.focusInline && change.value.selection.focus.offset === change.value.focusText.text.length;

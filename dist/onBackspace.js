@@ -23,7 +23,7 @@ function onBackspace(event, change, editor, opts) {
   var canBeEmpty = opts.canBeEmpty,
       stickOnDelete = opts.stickOnDelete;
 
-  if (change.value.isExpanded) return null;
+  if (change.value.selection.isExpanded) return null;
 
   // Logic for backspacing "into" a sticky inline
   var isAtStartOfCurrentTextNode = !change.value.focusInline && change.value.selection.focus.offset === 0;
