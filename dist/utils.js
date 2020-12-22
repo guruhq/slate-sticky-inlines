@@ -14,13 +14,13 @@ exports.moveToStartOf = moveToStartOf;
  * @return {Boolean}
  */
 
-function isInlineBanned(inline, opts) {
+function isInlineBanned(schema, inline, opts) {
   var allowedTypes = opts.allowedTypes,
       bannedTypes = opts.bannedTypes;
 
   // Something crazy happened, there is no inline, or somehow focus inline is not an inline.
 
-  if (!inline || inline.object !== "inline" || inline.isVoid) return true;
+  if (!inline || inline.object !== "inline" || schema.isVoid(inline)) return true;
 
   // The inline we are working with isn't allowed by user config.
   if (allowedTypes && !allowedTypes.includes(inline.type)) return true;
@@ -44,7 +44,7 @@ function moveToEndOf(change, node, event) {
   var offset = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
 
   event.preventDefault();
-  return event.shiftKey ? change.extendToEndOf(node).extend(offset) : change.collapseToEndOf(node).move(offset);
+  return event.shiftKey ? change.moveFocusToEndOfNode(node).moveFocusForward(offset) : change.moveToEndOfNode(node).moveForward(offset);
 }
 
 /**
@@ -62,5 +62,5 @@ function moveToStartOf(change, node, event) {
   var offset = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
 
   event.preventDefault();
-  return event.shiftKey ? change.extendToStartOf(node).extend(offset) : change.collapseToStartOf(node);
+  return event.shiftKey ? change.moveFocusToStartOfNode(node).moveFocusForward(offset) : change.moveToStartOfNode(node);
 }

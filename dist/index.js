@@ -1,30 +1,30 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _slateReact = require('slate-react');
+var _slateReact = require("slate-react");
 
-var _constants = require('./constants');
+var _constants = require("./constants");
 
-var _onArrowLeft = require('./onArrowLeft');
+var _onArrowLeft = require("./onArrowLeft");
 
 var _onArrowLeft2 = _interopRequireDefault(_onArrowLeft);
 
-var _onArrowRight = require('./onArrowRight');
+var _onArrowRight = require("./onArrowRight");
 
 var _onArrowRight2 = _interopRequireDefault(_onArrowRight);
 
-var _onBackspace = require('./onBackspace');
+var _onBackspace = require("./onBackspace");
 
 var _onBackspace2 = _interopRequireDefault(_onBackspace);
 
-var _onDelete = require('./onDelete');
+var _onDelete = require("./onDelete");
 
 var _onDelete2 = _interopRequireDefault(_onDelete);
 
-var _utils = require('./utils');
+var _utils = require("./utils");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -36,22 +36,23 @@ var defaults = {
   hasStickyBoundaries: true,
   canBeEmpty: true,
   stickOnDelete: true
+};
 
-  /**
-   * Cross Boundaries on Left Arrow, or Right arrow
-   * when on the Start or End of an inline boundary
-   * can delete all the text inside and still type to add more
-   *
-   * @param {Object} options
-   *   @property {Array} allowedTypes (optional)
-   *   @property {Array} bannedTypes (optional)
-   *   @property {Boolean} hasStickyBoundaries (optional)
-   *   @property {Boolean} canBeEmpty (optional)
-   *   @property {Boolean} stickOnDelete (optional)
-   * @return {Object} plugin
-   */
+/**
+ * Cross Boundaries on Left Arrow, or Right arrow
+ * when on the Start or End of an inline boundary
+ * can delete all the text inside and still type to add more
+ *
+ * @param {Object} options
+ *   @property {Array} allowedTypes (optional)
+ *   @property {Array} bannedTypes (optional)
+ *   @property {Boolean} hasStickyBoundaries (optional)
+ *   @property {Boolean} canBeEmpty (optional)
+ *   @property {Boolean} stickOnDelete (optional)
+ * @return {Object} plugin
+ */
 
-};function StickyInlines(opts) {
+function StickyInlines(opts) {
   opts = Object.assign({}, defaults, opts);
   var _opts = opts,
       allowedTypes = _opts.allowedTypes,
@@ -61,10 +62,10 @@ var defaults = {
 
 
   if (allowedTypes && !Array.isArray(allowedTypes)) {
-    console.warn('slate-sticky-inline: allowedTypes must be an Array of Strings');
+    console.warn("slate-sticky-inline: allowedTypes must be an Array of Strings");
   }
   if (!Array.isArray(bannedTypes)) {
-    console.warn('slate-sticky-inlines: bannedTypes must be an Array of Strings');
+    console.warn("slate-sticky-inlines: bannedTypes must be an Array of Strings");
   }
 
   /**
@@ -78,7 +79,7 @@ var defaults = {
 
   function onKeyDown(event, change, editor) {
     // We are working inside a specific inline, and they specifically said they don't want it to be sticky.
-    if (change.value.focusInline && (0, _utils.isInlineBanned)(change.value.focusInline, opts)) return null;
+    if (change.value.focusInline && (0, _utils.isInlineBanned)(change.value.schema, change.value.focusInline, opts)) return null;
 
     // They are moving the caret around, let's see if we need to interfere.
     switch (event.which) {
@@ -105,10 +106,10 @@ var defaults = {
   function onChange(change) {
     if (!canBeEmpty) return null;
     var toRemove = change.value.document.getInlines().reduce(function (failures, inline) {
-      var hasFocus = change.value.isFocused && change.value.selection.hasEdgeIn(inline);
+      var hasFocus = change.value.selection.isFocused && change.value.selection.anchor.isInNode(inline);
       var onlyHasZeroWidthSpace = inline.text === _constants.ZERO_WIDTH_SPACE;
 
-      if ((0, _utils.isInlineBanned)(inline, opts)) return failures;
+      if ((0, _utils.isInlineBanned)(change.value.schema, inline, opts)) return failures;
       return !hasFocus && onlyHasZeroWidthSpace ? [inline].concat(_toConsumableArray(failures)) : failures;
     }, []);
 
@@ -134,10 +135,10 @@ var defaults = {
     if (!change.value.focusInline) return null;
     var selection = (0, _slateReact.findRange)(window.getSelection(), change.value);
     if (!selection) return null;
-    var focusInline = change.value.document.getClosestInline(selection.anchorKey);
+    var focusInline = change.value.document.getClosestInline(selection.anchor.key);
     if (!focusInline) return null;
 
-    var selectionIsAtEndOfInline = focusInline.key === change.value.focusInline.key && selection.focusOffset === focusInline.text.length;
+    var selectionIsAtEndOfInline = focusInline.key === change.value.focusInline.key && selection.focus.offset === focusInline.text.length;
 
     if (selection.isCollapsed && selectionIsAtEndOfInline) {
       return change;
